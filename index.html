@@ -4,9 +4,26 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <title>JRS Links</title>
+    <style>
+      body { font-family: sans-serif; margin: 32px; background: #f5f7fb; color: #222; }
+      .wrap { max-width: 720px; margin: 0 auto; }
+      .links { display: grid; gap: 12px; margin-top: 24px; }
+      a.card { display: block; padding: 18px 20px; border-radius: 12px; background: white; border: 1px solid #d9e2f2; text-decoration: none; color: #1b2b4b; font-weight: 700; font-size: 18px; }
+      a.card small { display: block; margin-top: 6px; font-weight: 400; color: #667; }
+      a.card:hover { border-color: #4a90e2; box-shadow: 0 6px 20px rgba(74,144,226,0.12); }
+    </style>
   </head>
   <body>
-    <h1>JRS Links</h1>
-    <p><a href="/m/">モンスター図鑑へ</a></p>
+    <div class="wrap">
+      <h1>JRS Links</h1>
+      <div class="links">
+        <a class="card" href="/m/">モンスター図鑑
+          <small>monster viewer</small>
+        </a>
+        <a class="card" href="/i/">アイテムデータ
+          <small>item data search</small>
+        </a>
+      </div>
+    </div>
   </body>
 </html>
