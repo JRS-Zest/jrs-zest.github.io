@@ -11,6 +11,14 @@
       a.card { display: block; padding: 18px 20px; border-radius: 12px; background: white; border: 1px solid #d9e2f2; text-decoration: none; color: #1b2b4b; font-weight: 700; font-size: 18px; }
       a.card small { display: block; margin-top: 6px; font-weight: 400; color: #667; }
       a.card:hover { border-color: #4a90e2; box-shadow: 0 6px 20px rgba(74,144,226,0.12); }
+      .updates { margin-top: 16px; background: #fff; border: 1px solid #d9e2f2; border-radius: 12px; padding: 14px 16px; }
+      .updates h2 { margin: 0 0 10px; font-size: 18px; color: #1b2b4b; }
+      .updates ul { margin: 0; padding-left: 20px; }
+      .updates li { margin: 7px 0; line-height: 1.45; color: #24344f; }
+      .updates .date { font-weight: 700; color: #17325c; }
+      .updates details { margin-top: 6px; }
+      .updates summary { cursor: pointer; font-weight: 700; color: #1b2b4b; }
+      .updates summary:hover { text-decoration: underline; }
     </style>
   </head>
   <body>
@@ -30,6 +38,29 @@
           <small>更新があったものだけ</small>
         </a>
       </div>
+
+      <section class="updates" aria-label="更新内容">
+        <h2>更新内容</h2>
+        <ul>
+          <li><span class="date">2026/05/15:</span> ID 2971 永愛の誓約の item.dat 名称先頭に混入したLF改行コードを修正（露店価格Viewerで表示できない問題を修正）。</li>
+          <li><span class="date">2026/05/02:</span> DCダイアログを閉じた時点でドロップタブ側も再読み込みし、常に最新状態になるよう修正。</li>
+          <li><span class="date">2026/04/29:</span> UI下部ステータスバーにDropの最新行を表示するよう修正。</li>
+        </ul>
+
+        <details>
+          <summary>4件目以降を表示</summary>
+          <ul>
+            <li><span class="date">2026/04/26:</span> 0548アップデート追加アイテムをDCダイアログの一括切り替えボタンへ追加反映。</li>
+            <li><span class="date">2026/04/17:</span> G員タブを追加。ギルド員一覧の取得表示と比較機能を追加。</li>
+            <li><span class="date">2026/04/15:</span> 装備画像を直接コピーからPNG保存形式へ変更。</li>
+            <li><span class="date">2026/04/10:</span> チャットにAutoScrollのオン/オフチェックボックスを追加。</li>
+            <li><span class="date">2026/04/09:</span> チャット種別絞り込み切り替えの重さを改善。</li>
+            <li><span class="date">2026/04/08:</span> 装備タブを追加。ログイン直後の受信から現在装備を一覧表示。</li>
+            <li><span class="date">2026/04/07:</span> チャットタブをボタン絞り込み方式に変更。</li>
+            <li><span class="date">2026/03/30:</span> 鐘開始パケットの開始漏れ修正、開始漏れ時の差分計算タイマー起動、ドロップタブへ地下界の書とバッジ類を反映。</li>
+          </ul>
+        </details>
+      </section>
     </div>
   </body>
 </html>
