@@ -19,6 +19,7 @@
       .updates details { margin-top: 6px; }
       .updates summary { cursor: pointer; font-weight: 700; color: #1b2b4b; }
       .updates summary:hover { text-decoration: underline; }
+      .updates .hint { margin: 0 0 10px; font-size: 12px; color: #667; }
     </style>
   </head>
   <body>
@@ -41,26 +42,91 @@
 
       <section class="updates" aria-label="更新内容">
         <h2>更新内容</h2>
-        <ul>
-          <li><span class="date">2026/05/15:</span> ID 2971 永愛の誓約の item.dat 名称先頭に混入したLF改行コードを修正（露店価格Viewerで表示できない問題を修正）。</li>
-          <li><span class="date">2026/05/02:</span> DCダイアログを閉じた時点でドロップタブ側も再読み込みし、常に最新状態になるよう修正。</li>
-          <li><span class="date">2026/04/29:</span> UI下部ステータスバーにDropの最新行を表示するよう修正。</li>
-        </ul>
-
-        <details>
+        <p class="hint">この欄は updates.txt から自動読み込みします。</p>
+        <div id="updates-latest">読み込み中...</div>
+        <details id="updates-older" hidden>
           <summary>4件目以降を表示</summary>
-          <ul>
-            <li><span class="date">2026/04/26:</span> 0548アップデート追加アイテムをDCダイアログの一括切り替えボタンへ追加反映。</li>
-            <li><span class="date">2026/04/17:</span> G員タブを追加。ギルド員一覧の取得表示と比較機能を追加。</li>
-            <li><span class="date">2026/04/15:</span> 装備画像を直接コピーからPNG保存形式へ変更。</li>
-            <li><span class="date">2026/04/10:</span> チャットにAutoScrollのオン/オフチェックボックスを追加。</li>
-            <li><span class="date">2026/04/09:</span> チャット種別絞り込み切り替えの重さを改善。</li>
-            <li><span class="date">2026/04/08:</span> 装備タブを追加。ログイン直後の受信から現在装備を一覧表示。</li>
-            <li><span class="date">2026/04/07:</span> チャットタブをボタン絞り込み方式に変更。</li>
-            <li><span class="date">2026/03/30:</span> 鐘開始パケットの開始漏れ修正、開始漏れ時の差分計算タイマー起動、ドロップタブへ地下界の書とバッジ類を反映。</li>
-          </ul>
+          <div id="updates-older-body"></div>
         </details>
       </section>
     </div>
+
+    <script>
+      function escapeHtml(s) {
+        return s
+          .replace(/&/g, '&amp;')
+          .replace(/</g, '&lt;')
+          .replace(/>/g, '&gt;')
+          .replace(/"/g, '&quot;')
+          .replace(/'/g, '&#39;');
+      }
+
+      function parseUpdates(text) {
+        const lines = text.replace(/\r\n/g, '\n').split('\n');
+        const entries = [];
+        let current = null;
+
+        for (const rawLine of lines) {
+          const line = rawLine.trim();
+          const m = line.match(/^更新内容\s+(\d{4}\/\d{2}\/\d{2})$/);
+
+          if (m) {
+            if (current) entries.push(current);
+            current = { date: m[1], bullets: [] };
+            continue;
+          }
+
+          if (!current || line.length === 0) continue;
+
+          if (line.startsWith('- ')) {
+            current.bullets.push(line.slice(2).trim());
+          } else if (current.bullets.length > 0) {
+            current.bullets[current.bullets.length - 1] += ' ' + line;
+          }
+        }
+
+        if (current) entries.push(current);
+        return entries.filter(e => e.bullets.length > 0);
+      }
+
+      function renderList(entries) {
+        if (!entries.length) return '<p>更新内容がありません。</p>';
+
+        const items = entries.map((e) => {
+          const summary = e.bullets.join(' / ');
+          return `<li><span class="date">${escapeHtml(e.date)}:</span> ${escapeHtml(summary)}</li>`;
+        }).join('');
+
+        return `<ul>${items}</ul>`;
+      }
+
+      async function loadUpdates() {
+        const latestEl = document.getElementById('updates-latest');
+        const olderWrap = document.getElementById('updates-older');
+        const olderBody = document.getElementById('updates-older-body');
+
+        try {
+          const resp = await fetch(`updates.txt?v=${Date.now()}`, { cache: 'no-store' });
+          if (!resp.ok) throw new Error(`HTTP ${resp.status}`);
+
+          const text = await resp.text();
+          const all = parseUpdates(text);
+          const latest = all.slice(0, 3);
+          const older = all.slice(3);
+
+          latestEl.innerHTML = renderList(latest);
+
+          if (older.length > 0) {
+            olderWrap.hidden = false;
+            olderBody.innerHTML = renderList(older);
+          }
+        } catch (err) {
+          latestEl.innerHTML = '<p>更新内容の読み込みに失敗しました。updates.txt を確認してください。</p>';
+          console.error('Failed to load updates:', err);
+        }
+      }
+
+      loadUpdates();
+    </script>
   </body>
 </html>
