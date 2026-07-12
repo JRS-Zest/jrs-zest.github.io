@@ -29,9 +29,10 @@
   <body>
     <div class="wrap">
       <h1>JRS Links</h1>
-      <div class="links">
-        <div style="padding: 0 20px; font-weight: bold;">※07/12のアップデートで大幅改変となりアイテム取得タブなどが正常に表示されません。時間がかかりそうです。</div>
-        <a class="card" href="https://duwpy101-debug.github.io/JRS_monsters/">モンスター図鑑
+        <div style="padding: 0 20px; font-weight: bold;">※07/12のアップデートで大幅改変となり対応出来なさそうですのでツール公開を終了しました</div>
+    <!--  
+    <div class="links">
+                <a class="card" href="https://duwpy101-debug.github.io/JRS_monsters/">モンスター図鑑
           <small>GitHub Pages</small>
         </a>
         <a class="card" href="/JRS_item/">アイテムデータ
@@ -57,6 +58,7 @@
         </details>
       </section>
     </div>
+    -- >
 
     <script>
       function escapeHtml(s) {
@@ -72,68 +74,4 @@
         const lines = text.replace(/\r\n/g, '\n').split('\n');
         const entries = [];
         let current = null;
-
-        for (const rawLine of lines) {
-          const line = rawLine.trim();
-          const m = line.match(/^更新内容\s+(\d{4}\/\d{2}\/\d{2})$/);
-
-          if (m) {
-            if (current) entries.push(current);
-            current = { date: m[1], bullets: [] };
-            continue;
-          }
-
-          if (!current || line.length === 0) continue;
-
-          if (line.startsWith('- ')) {
-            current.bullets.push(line.slice(2).trim());
-          } else if (current.bullets.length > 0) {
-            current.bullets[current.bullets.length - 1] += ' ' + line;
-          }
-        }
-
-        if (current) entries.push(current);
-        return entries.filter(e => e.bullets.length > 0);
-      }
-
-      function renderList(entries) {
-        if (!entries.length) return '<p>更新内容がありません。</p>';
-
-        const items = entries.map((e) => {
-          const summary = e.bullets.join(' / ');
-          return `<li><span class="date">${escapeHtml(e.date)}:</span> ${escapeHtml(summary)}</li>`;
-        }).join('');
-
-        return `<ul>${items}</ul>`;
-      }
-
-      async function loadUpdates() {
-        const latestEl = document.getElementById('updates-latest');
-        const olderWrap = document.getElementById('updates-older');
-        const olderBody = document.getElementById('updates-older-body');
-
-        try {
-          const resp = await fetch(`updates.txt?v=${Date.now()}`, { cache: 'no-store' });
-          if (!resp.ok) throw new Error(`HTTP ${resp.status}`);
-
-          const text = await resp.text();
-          const all = parseUpdates(text);
-          const latest = all.slice(0, 3);
-          const older = all.slice(3);
-
-          latestEl.innerHTML = renderList(latest);
-
-          if (older.length > 0) {
-            olderWrap.hidden = false;
-            olderBody.innerHTML = renderList(older);
-          }
-        } catch (err) {
-          latestEl.innerHTML = '<p>更新内容の読み込みに失敗しました。updates.txt を確認してください。</p>';
-          console.error('Failed to load updates:', err);
-        }
-      }
-
-      loadUpdates();
-    </script>
-  </body>
 </html>
