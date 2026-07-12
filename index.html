@@ -70,17 +70,15 @@
         const lines = text.replace(/\r\n/g, '\n').split('\n');
         const entries = [];
         let current = null;
-
         lines.forEach(line => {
           const trimmed = line.trim();
-          if (trimmed === "") return; // 空行は無視
-
-          // 日付行か判定
-          if (trimmed.match(/^\d{4}[\/\-]\d{2}[\/\-]\d{2}/)) {
+          if (trimmed === "") return;
+          const dateMatch = trimmed.match(/(\d{4}[\/\-]\d{2}[\/\-]\d{2})/);
+          // 「更新内容」で始まる行を日付行とみなす
+          if (trimmed.startsWith("更新内容") && dateMatch) {
             if (current) entries.push(current);
-            current = { date: trimmed.replace("更新内容 ", ""), contents: [] };
+            current = { date: dateMatch[1], contents: [] };
           } else if (current) {
-            // ハイフンから始まる行などを内容として追加
             current.contents.push(trimmed);
           }
         });
