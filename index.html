@@ -29,8 +29,8 @@
   <body>
     <div class="wrap">
       <h1>JRS Links</h1>
-        <div class="links">
-                <a class="card" href="https://duwpy101-debug.github.io/JRS_monsters/">ver 0.0548 モンスター図鑑
+      <div class="links">
+        <a class="card" href="https://duwpy101-debug.github.io/JRS_monsters/">ver 0.0548 モンスター図鑑
           <small>GitHub Pages</small>
         </a>
         <a class="card" href="/JRS_item/">ver 0.0548 アイテムデータ
@@ -70,4 +70,47 @@
         const lines = text.replace(/\r\n/g, '\n').split('\n');
         const entries = [];
         let current = null;
+        lines.forEach(line => {
+          if (line.match(/^\d{4}-\d{2}-\d{2}/)) {
+            if (current) entries.push(current);
+            current = { date: line.trim(), contents: [] };
+          } else if (current && line.trim() !== "") {
+            current.contents.push(line.trim());
+          }
+        });
+        if (current) entries.push(current);
+        return entries;
+      }
+
+      async function loadUpdates() {
+        try {
+          const response = await fetch('updates.txt');
+          if (!response.ok) throw new Error('Failed to load');
+          const text = await response.text();
+          const entries = parseUpdates(text);
+
+          const latest = document.getElementById('updates-latest');
+          const older = document.getElementById('updates-older');
+          const olderBody = document.getElementById('updates-older-body');
+
+          let html = '<ul>';
+          entries.forEach((e, i) => {
+            const contentHtml = `<li><span class="date">${escapeHtml(e.date)}</span><br>${e.contents.map(c => escapeHtml(c)).join('<br>')}</li>`;
+            if (i < 3) {
+              html += contentHtml;
+            } else {
+              olderBody.innerHTML += `<ul>${contentHtml}</ul>`;
+            }
+          });
+          html += '</ul>';
+          latest.innerHTML = html;
+          if (entries.length > 3) older.hidden = false;
+        } catch (e) {
+          document.getElementById('updates-latest').textContent = '更新情報の読み込みに失敗しました。';
+        }
+      }
+
+      loadUpdates();
+    </script>
+  </body>
 </html>
